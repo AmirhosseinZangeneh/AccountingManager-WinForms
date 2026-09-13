@@ -1,0 +1,29 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Restore packages
+        run: msbuild AccountingManager.sln /t:Restore
+
+      - name: Build solution
+        run: msbuild AccountingManager.sln /m /p:Configuration=Release /p:RestorePackages=false
